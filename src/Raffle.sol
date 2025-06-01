@@ -136,23 +136,23 @@ contract Raffle is VRFConsumerBaseV2Plus {
         }
 
         s_raffleState = RaffleState.CALCULATING;
-        VRFV2PlusClient.RandomWordsRequest memory request = VRFV2PlusClient.RandomWordsRequest
-        ({
-                keyHash: i_keyHash,
-                subId: i_subscriptionId,
-                requestConfirmations: REQUEST_CONFIRMATIONS,
-                callbackGasLimit: i_callbackGasLimit,
-                numWords: NUM_WORDS,
-                extraArgs: VRFV2PlusClient._argsToBytes(
-                    // Set nativePayment to true to pay for VRF requests with Sepolia ETH instead of LINK
-                    VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
-                )
+        VRFV2PlusClient.RandomWordsRequest memory request = VRFV2PlusClient.RandomWordsRequest({
+            keyHash: i_keyHash,
+            subId: i_subscriptionId,
+            requestConfirmations: REQUEST_CONFIRMATIONS,
+            callbackGasLimit: i_callbackGasLimit,
+            numWords: NUM_WORDS,
+            extraArgs: VRFV2PlusClient._argsToBytes(
+                // Set nativePayment to true to pay for VRF requests with Sepolia ETH instead of LINK
+                VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
+            )
         });
         uint256 requestId = s_vrfCoordinator.requestRandomWords(request);
         // this is actually redundant caurse vrfcoordinator already emit this.... just for testing
         emit RequestedRaffleWinner(requestId);
     }
     // CEI: Check-Effect-Interaction
+
     function fulfillRandomWords(uint256, /*requestId*/ uint256[] calldata randomwords) internal override {
         // 1. Check: Ensure the raffle is in the CALCULATING state
         // 2. Effect: Change the raffle state to OPEN(internal Contract State)
